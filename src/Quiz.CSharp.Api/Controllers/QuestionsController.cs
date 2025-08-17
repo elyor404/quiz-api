@@ -49,7 +49,7 @@ public sealed class QuestionsController(
     }
 
     [HttpPost("create")]
-    // [Authorize("Admin:Write")]
+    [Authorize("Admin:Write")]
     [ProducesResponseType<ApiResponse<CreateQuestionResponse>>(StatusCodes.Status201Created)]
     [ProducesResponseType<ApiResponse<CreateQuestionResponse>>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
