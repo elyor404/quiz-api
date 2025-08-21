@@ -51,7 +51,6 @@ public sealed class QuestionsController(
     [HttpPost("create")]
     [Authorize("Admin:Write")]
     [ProducesResponseType<ApiResponse<CreateQuestionResponse>>(StatusCodes.Status201Created)]
-    [ProducesResponseType<ApiResponse<CreateQuestionResponse>>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateQuestion(
@@ -60,16 +59,7 @@ public sealed class QuestionsController(
     {
         var response = await questionService.CreateQuestionAsync(mapper.Map<CreateQuestionModel>(request), cancellationToken);
 
-        if (response.IsSuccess)
-            return CreatedAtAction(
-                nameof(CreateQuestion),
-                new ApiResponse<CreateQuestionResponse>(response.Value));
-
-        return BadRequest(new ApiResponse<CreateQuestionResponse>(
-            Success: false,
-            Message: response.ErrorMessage,
-            Errors: response.Errors
-        ));
+        return Ok(new ApiResponse<CreateQuestionResponse>(response.Value));
 
     }
 } 

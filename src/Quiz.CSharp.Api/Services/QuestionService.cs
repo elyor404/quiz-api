@@ -9,6 +9,8 @@ using Quiz.CSharp.Api.Services.Abstractions;
 using Quiz.CSharp.Api.Contracts.Requests;
 using Quiz.CSharp.Data.Models;
 using Quiz.CSharp.Data.ValueObjects;
+using Quiz.CSharp.Data.Entities;
+using Quiz.Infrastructure.Exceptions;
 
 public sealed class QuestionService(
     IAnswerRepository answerRepository,
@@ -74,12 +76,10 @@ public sealed class QuestionService(
     public async Task<Result<CreateQuestionResponse>> CreateQuestionAsync(CreateQuestionModel model, CancellationToken cancellationToken = default)
     {
         if (await collectionRepository.CollectionExistByIdAsync(model.CollectionId, cancellationToken) is false)
-            return Result<CreateQuestionResponse>.Failure($"Collection with {model.CollectionId} id doesn't exist");
+            throw new CustomNotFoundException($"Collection with {model.CollectionId} id doesn't exist");
 
-        var question = CreateQuestionFromModel(model);
-        if(question is null)
-            return Result<CreateQuestionResponse>.Failure($"Invalid question type: '{model.Type}'");
-
+        var question = CreateQuestionFromModel(model) ?? throw new CustomBadRequestException($"Invalid question type: '{model.Type}'");
+        
         var createdQuestion = await questionRepository.CreateQuestionAsync(question, cancellationToken);
         var response = mapper.Map<CreateQuestionResponse>(createdQuestion);
         return Result<CreateQuestionResponse>.Success(response);
