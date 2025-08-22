@@ -58,8 +58,6 @@ public sealed class QuestionsController(
         CancellationToken cancellationToken = default)
     {
         var response = await questionService.CreateQuestionAsync(mapper.Map<CreateQuestionModel>(request), cancellationToken);
-
         return Ok(new ApiResponse<CreateQuestionResponse>(response.Value));
-
     }
 } 

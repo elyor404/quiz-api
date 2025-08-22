@@ -75,7 +75,7 @@ public sealed class QuestionService(
 
     public async Task<Result<CreateQuestionResponse>> CreateQuestionAsync(CreateQuestionModel model, CancellationToken cancellationToken = default)
     {
-        if (await collectionRepository.CollectionExistByIdAsync(model.CollectionId, cancellationToken) is false)
+        if (await collectionRepository.ExistAsync(model.CollectionId, cancellationToken) is false)
             throw new CustomNotFoundException($"Collection with {model.CollectionId} id doesn't exist");
 
         var question = CreateQuestionFromModel(model) ?? throw new CustomBadRequestException($"Invalid question type: '{model.Type}'");
